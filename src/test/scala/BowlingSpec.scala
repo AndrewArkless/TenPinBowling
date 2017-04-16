@@ -48,12 +48,24 @@ class BowlingSpec extends WordSpecLike with Matchers {
       Bowling.score(spareFrame) shouldBe 32
     }
 
+    "Calculate all spares in a row except last" in {
+      val spareFrame=List[Frame](Frame("5","5"),Frame("5","5"),
+        Frame("5","5"),Frame("5","5"),
+        Frame("5","5"),Frame("5","5"),
+        Frame("5","5"),Frame("5","5"),
+        Frame("5","5"),
+        Frame("5","0"))
+      Bowling.score(spareFrame) shouldBe 140
+    }
+
     "Calculate All spares in a row" in {
       val spareFrame=List[Frame](
         Frame("5","5"),Frame("5","5"),
-        Frame("5","5"),Frame("5","5"),Frame("5","5"),
-        Frame("5","5"),Frame("5","5"),Frame("5","5"),
-        Frame("5","5"),Frame("5","5"),Frame("5","0")
+        Frame("5","5"),Frame("5","5"),
+        Frame("5","5"),Frame("5","5"),
+        Frame("5","5"),Frame("5","5"),
+        Frame("5","5"),Frame("5","5"),
+        Frame("5","0")
       )
         Bowling.score(spareFrame) shouldBe 150
     }
