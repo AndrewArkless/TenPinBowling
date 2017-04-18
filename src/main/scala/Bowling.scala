@@ -4,50 +4,72 @@
 case class Frame(firstBowl: Int, secondBowl:Int)
 object  Bowling {
   def score(frame:List[Frame])={
+    def helper(frame:List[Frame],score:Int,frameCount:Int):Int={
 
-      def getFrame(frame:List[(Frame,Int)],index:Int)={
-        frame.find(_._2==index)
+      frame match {
+        case Nil=>score
+        //Strikes + Bonus
+        case Frame(10,0) :: Frame(10,0) :: xs if frameCount==10 => score+20+xs.head.firstBowl
+        case Frame(10,0) :: xs  if frameCount==10 => score+10+xs.head.firstBowl + xs.head.secondBowl
+
+        //Strikes
+        case Frame(10,0) :: Frame(10,0) :: xs =>helper(frame.tail,score+20+xs.head.firstBowl,frameCount+1)
+        case Frame(10,0) :: xs :: xss =>helper(frame.tail,score+10+xs.firstBowl+xs.secondBowl,frameCount+1)
+
+        //Spares + bonus
+        case x :: xs  if x.firstBowl+ x.secondBowl==10 && frameCount==10=>score+10+xs.head.firstBowl
+
+        //Spares
+        case x :: xs  if x.firstBowl+ x.secondBowl==10 =>helper(xs,score+10+xs.head.firstBowl,frameCount+1)
+
+        //Opem
+        case x :: xs => helper(xs,score+x.firstBowl+x.secondBowl, frameCount+1)
+
       }
-
-      def helper(frames:List[(Frame, Int)],score:Int):Int={
-        if (frames==Nil) {
-          score
-        }
-        else {
-          frames.head match {
-            //Strikes
-            case ((frame,i)) if frame.firstBowl==10 =>
-              {
-                if(i<10) {
-                  val nextBonusFrame = getFrame(frames, i + 1).get
-                  val firstBonusRoll = nextBonusFrame._1.firstBowl
-                  val secondBonusRoll = if (firstBonusRoll == 10) {
-                    getFrame(frames, i + 2).get._1.firstBowl
-                  } else {
-                    nextBonusFrame._1.secondBowl
-                  }
-                  helper(frames.tail, score + frame.firstBowl + firstBonusRoll + secondBonusRoll)
-                } else {
-                  helper(frames.tail, score + frame.firstBowl)
-                }
-              }
-
-            //Spares
-            case ((frame, i)) if frame.firstBowl + frame.secondBowl == 10 => {
-              if (i < 10) {
-                val bonusPoints = getFrame(frames, i + 1).get
-                helper(frames.tail, score + frame.firstBowl + frame.secondBowl + bonusPoints._1.firstBowl)
-              } else {
-                helper(frames.tail, score + frame.firstBowl + frame.secondBowl)
-              }
-
-            }
-            //Open Frames
-            case (frame, i) =>
-              helper(frames.tail, score + frame.firstBowl + frame.secondBowl)
-          }
-        }
-      }
+    }
+//      def getFrame(frame:List[(Frame,Int)],index:Int)={
+//        frame.find(_._2==index)
+//      }
+//
+//      def helper(frames:List[(Frame, Int)],score:Int):Int={
+//        if (frames==Nil) {
+//          score
+//        }
+//        else {
+//          val currentFrame=frames.head._1
+//          val currentFrameIndex=frames.head._2
+//
+//            //Strikes
+//          if (currentFrame.firstBowl==10)
+//              {
+//                if(currentFrameIndex<10) {
+//                  val nextBonusFrame = getFrame(frames, currentFrameIndex + 1).get
+//                  val firstBonusRoll = nextBonusFrame._1.firstBowl
+//                  val secondBonusRoll = if (firstBonusRoll == 10) {
+//                    getFrame(frames, currentFrameIndex + 2).get._1.firstBowl
+//                  } else {
+//                    nextBonusFrame._1.secondBowl
+//                  }
+//                  helper(frames.tail, score + currentFrame.firstBowl + firstBonusRoll + secondBonusRoll)
+//                } else {
+//                  helper(frames.tail, score + currentFrame.firstBowl)
+//                }
+//              } else{
+//
+//                   if (currentFrame.firstBowl + currentFrame.secondBowl == 10 ) {
+//                     if (currentFrameIndex < 10) {
+//                       val bonusPoints = getFrame(frames, currentFrameIndex + 1).get
+//                       helper(frames.tail, score + currentFrame.firstBowl + currentFrame.secondBowl + bonusPoints._1.firstBowl)
+//                     } else {
+//                       helper(frames.tail, score + currentFrame.firstBowl + currentFrame.secondBowl)
+//                     }
+//
+//                   } else {
+//                     helper(frames.tail, score + currentFrame.firstBowl + currentFrame.secondBowl)
+//                   }
+//          }
+//        }
+//      }
 //    def helper(frame:List[Frame],score:Int,previousFrame:Frame):Int={
 //      println("SCORE++++++++++++++++++++++++++++" + score)
 //      frame match {
@@ -136,7 +158,7 @@ object  Bowling {
 //      }
 //    }
 //    helper(frame,0,Frame(0,0),false)
-    val indexedFrames: List[(Frame, Int)] =frame.zip(1 to frame.length)
-    helper(indexedFrames,0)
+    //val indexedFrames: List[(Frame, Int)] =frame.zip(1 to frame.length)
+    helper(frame,0,1)
   }
 }
