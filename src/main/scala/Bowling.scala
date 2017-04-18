@@ -33,7 +33,7 @@ object Bowling {
 
       }
     }
-println()
+
     helper(allFrames,0)
   }
 }
