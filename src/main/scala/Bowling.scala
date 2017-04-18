@@ -5,31 +5,35 @@ object Bowling {
   val Spare=10
   val lastNonBonusFrame=10
 
-  def score(frame:List[Frame])={
-    def helper(frame:List[Frame],score:Int,currentFrameIndex:Int):Int={
+  def score(allFrames:List[Frame])={
+    val noOfFrames=allFrames.length
 
-      frame match {
+    def helper(remainingFrames:List[Frame],score:Int):Int={
+
+      val currentFrameIndex=noOfFrames-remainingFrames.length+1
+
+      remainingFrames match {
         case Nil=>score
         //Strikes + Bonus
-        case Frame(Strike,_) :: Frame(Strike,_) :: xs if currentFrameIndex==lastNonBonusFrame => score+20+xs.head.firstBowl
-        case Frame(Strike,_) :: xs  if currentFrameIndex==lastNonBonusFrame => score+10+xs.head.firstBowl + xs.head.secondBowl
+        case Frame(Strike,_) :: Frame(Strike,_) :: Frame(firstBowl,_) :: xs if currentFrameIndex==lastNonBonusFrame => score+20+firstBowl
+        case Frame(Strike,_) :: Frame(firstBowl,secondBowl) :: xs  if currentFrameIndex==lastNonBonusFrame => score+10+firstBowl+secondBowl
 
         //Strikes
-        case Frame(Strike,_) :: Frame(Strike,_) :: xs =>helper(frame.tail,score+20+xs.head.firstBowl,currentFrameIndex+1)
-        case Frame(Strike,_) :: xs :: xss =>helper(frame.tail,score+10+xs.firstBowl+xs.secondBowl,currentFrameIndex+1)
+        case Frame(Strike,_) :: Frame(Strike,_) :: xs =>helper(remainingFrames.tail,score+20+xs.head.firstBowl)
+        case Frame(Strike,_) :: Frame(firstBowl,secondBowl) :: xs =>helper(remainingFrames.tail,score+10+firstBowl+secondBowl)
 
         //Spares + bonus
-        case x :: xs  if x.firstBowl+ x.secondBowl==Spare && currentFrameIndex==lastNonBonusFrame=>score+10+xs.head.firstBowl
+        case Frame(firstBowl,secondBowl) :: Frame(bonus,_) :: xs  if firstBowl + secondBowl==Spare && currentFrameIndex==lastNonBonusFrame=>score+10+bonus
 
         //Spares
-        case x :: xs  if x.firstBowl+ x.secondBowl==Spare =>helper(xs,score+10+xs.head.firstBowl,currentFrameIndex+1)
+        case Frame(firstBowl,secondBowl) :: Frame(bonus,_) :: xs if firstBowl+ secondBowl==Spare =>helper(remainingFrames.tail,score+10+bonus)
 
-        //Opem
-        case x :: xs => helper(xs,score+x.firstBowl+x.secondBowl, currentFrameIndex+1)
+        //Open
+        case Frame(firstBowl,secondBowl) :: xs => helper(xs,score+firstBowl+secondBowl)
 
       }
     }
 
-    helper(frame,0,1)
+    helper(allFrames,0)
   }
 }
