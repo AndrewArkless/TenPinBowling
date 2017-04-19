@@ -167,6 +167,16 @@ class BowlingSpec extends WordSpecLike with Matchers {
        Bowling.score(AllStrikesFrame) shouldBe 299
      }
 
+     "Calculate 8 strikes correctly an open with 1 strike bonus and 1 Spare "  in {
+       val AllStrikesFrame=List[Frame](
+         Frame( 10 , 0 ),Frame( 10 , 0 ),
+         Frame( 10 , 0 ),Frame( 10 , 0 ),
+         Frame( 10 , 0 ),Frame( 10 , 0 ),
+         Frame( 1 , 1 ), Frame( 10 , 0 ),
+         Frame( 10 , 0 ),Frame( 10 , 0 ),
+         Frame( 10 , 0 ),Frame( 9 , 0 ))
+       Bowling.score(AllStrikesFrame) shouldBe 244
+     }
 
      "Return a 56 when user a spare and then standard Frames"   in {
       val testFrame=List[Frame](
@@ -217,6 +227,71 @@ class BowlingSpec extends WordSpecLike with Matchers {
          Frame(6,0))
        Bowling.score(testFrame) shouldBe 133
      }
-  }
+
+     //Where spares and strikes cannot yet be evaluated
+
+     "Where frame list is a spare which cannot be evaluated " in {
+       val testFrame=List[Frame](
+             Frame( 9 , 1 ))
+        Bowling.score(testFrame) shouldBe 0
+      }
+
+     "Where frame list has an open frame and then a spare which cannot be evaluated " in {
+         val testFrame=List[Frame](
+           Frame( 1 , 1 ),
+           Frame( 9 , 1 )
+         )
+         Bowling.score(testFrame) shouldBe 2
+     }
+
+     "Where frame list has an 10 frame and then a spare which cannot be evaluated " in {
+       val testFrame = List[Frame](
+         Frame(1, 1), Frame(1, 1),
+         Frame(1, 1), Frame(1, 1),
+         Frame(1, 1), Frame(1, 1),
+         Frame(1, 1), Frame(1, 1),
+         Frame(1, 1), Frame(9, 1)
+       )
+       Bowling.score(testFrame) shouldBe 18
+     }
+
+     "Where frame list is a strike which cannot be evaluated " in {
+       val testFrame=List[Frame](
+         Frame( 10 , 0 ))
+       Bowling.score(testFrame) shouldBe 0
+     }
+
+     "Where frame list has an open frame and then a strike which cannot be evaluated " in {
+       val testFrame=List[Frame](
+         Frame( 1 , 1 ),
+         Frame( 10 , 0 ),
+         Frame( 10 , 0 )
+       )
+       Bowling.score(testFrame) shouldBe 2
+     }
+
+     "Where frame list has an 10 frame and then a strike which cannot be evaluated " in {
+       val testFrame = List[Frame](
+         Frame(1, 1), Frame(1, 1),
+         Frame(1, 1), Frame(1, 1),
+         Frame(1, 1), Frame(1, 1),
+         Frame(1, 1), Frame(1, 1),
+         Frame(1, 1), Frame(10, 0)
+       )
+       Bowling.score(testFrame) shouldBe 18
+     }
+     "Where frame list has an 10 frame and then a 2 strikes which cannot be evaluated " in {
+       val testFrame = List[Frame](
+         Frame(1, 1), Frame(1, 1),
+         Frame(1, 1), Frame(1, 1),
+         Frame(1, 1), Frame(1, 1),
+         Frame(1, 1), Frame(1, 1),
+         Frame(1, 1), Frame(10, 0),
+         Frame(10,0)
+       )
+       Bowling.score(testFrame) shouldBe 18
+     }
+
+   }
 
 }
